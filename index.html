@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tenho um pedido para você...</title>
+    <style>
+        /* --- ESTILIZAÇÃO (CSS) --- */
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #ffe4e1; /* Cor de fundo */
+            font-family: 'Arial', sans-serif;
+            overflow: hidden;
+        }
+
+        #card {
+            text-align: center;
+            background: white;
+            padding: 40px;
+            border-radius: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            max-width: 400px;
+            width: 85%;
+            z-index: 10;
+        }
+
+        #gif {
+            width: 180px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            color: #d1105a;
+            font-size: 1.6rem;
+            margin-bottom: 30px;
+        }
+
+        .btn-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            height: 50px; /* Garante que o layout não quebre quando o botão fugir */
+        }
+
+        button {
+            padding: 12px 25px;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: transform 0.2s;
+        }
+
+        #btn-sim {
+            background-color: #ff4d6d;
+            color: white;
+        }
+
+        #btn-sim:hover {
+            transform: scale(1.1);
+        }
+
+        #btn-nao {
+            background-color: #888;
+            color: white;
+            position: absolute; /* Essencial para o botão fugir */
+        }
+
+        /* Botão de Controle de Som */
+        #controle-audio {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: white;
+            border: 2px solid #ff4d6d;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+        }
+
+        /* Responsividade para celular */
+        @media (max-width: 600px) {
+            h1 { font-size: 1.3rem; }
+            #gif { width: 150px; }
+        }
+    </style>
+</head>
+<body>
+
+    <audio id="musica" loop>
+        <source src="lua-cheia.mp3" type="audio/mpeg">
+    </audio>
+
+    <button id="controle-audio" onclick="toggleMusica()">🔇</button>
+
+    <div id="card">
+        <img id="gif" src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExOHpueXpueXpueXpueXpueXpueXpueXpueXpueXpueXpueXpueXpueCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/cLS1cfxvGOPVpf9g3y/giphy.gif" alt="Gatinho">
+        <h1 id="texto">Senhorita Manuela Valente, Seu maior fã tem uma pergunta a te fazer.
+             Aceita namorar comigo?</h1>
+        
+        <div class="btn-container">
+            <button id="btn-sim" onclick="vitoria()">Sim!</button>
+            <button id="btn-nao" onmouseover="desviar()" onclick="desviar()">Não</button>
+        </div>
+    </div>
+
+    <script>
+        /* --- LÓGICA (JAVASCRIPT) --- */
+        const musica = document.getElementById("musica");
+        const btnSom = document.getElementById("controle-audio");
+
+        // Faz o botão "Não" fugir
+        function desviar() {
+            const botaoNao = document.getElementById("btn-nao");
+            
+            // Calcula posições aleatórias, mas mantendo dentro da tela visível
+            const maxX = window.innerWidth - botaoNao.offsetWidth - 20;
+            const maxY = window.innerHeight - botaoNao.offsetHeight - 20;
+
+            const randomX = Math.max(20, Math.floor(Math.random() * maxX));
+            const randomY = Math.max(20, Math.floor(Math.random() * maxY));
+
+            botaoNao.style.left = randomX + "px";
+            botaoNao.style.top = randomY + "px";
+        }
+
+        // Ação de sucesso ao clicar em "Sim"
+        function vitoria() {
+            const card = document.getElementById("card");
+            
+            // Garante que a música toque
+            musica.play();
+            btnSom.innerHTML = "🔊";
+
+            card.innerHTML = `
+                <img id="imagem-principal" src="https://i.imgur.com/ARvrKLo.png" alt="Coração">
+                <h1 style="color: #ff4d6d">Sabia que ia aceitar! ❤️</h1>
+                <p>Prepare o coração, porque agora é oficial!</p>
+            `;
+        }
+
+        // Função Mudo/Play
+        function toggleMusica() {
+            if (musica.paused) {
+                musica.play();
+                btnSom.innerHTML = "🔊";
+            } else {
+                musica.pause();
+                btnSom.innerHTML = "🔇";
+            }
+        }
+
+        // Tenta tocar a música no primeiro clique na página (regra do navegador)
+        document.addEventListener('click', () => {
+            if (musica.paused) {
+                musica.play().then(() => btnSom.innerHTML = "🔊").catch(() => {});
+            }
+        }, { once: true });
+    </script>
+</body>
+</html>
